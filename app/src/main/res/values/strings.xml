@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyAndroidKeyStore</string>
+    <string name="delete">Delete Key</string>
+    <string name="decrypt">Decrypt</string>
+    <string name="encrypt">Encrypt</string>
+    <string name="key_alias">Key Alias</string>
+    <string name="generate">Generate new Key</string>
+    <string name="initial_text">Initial Text</string>
+    <string name="final_text">Encrypt Text</string>
+    <string name="decrypt_result">Decrypt Text</string>
+</resources>
