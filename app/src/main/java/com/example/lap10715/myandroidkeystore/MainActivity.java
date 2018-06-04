@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void createNewKeys(View view){
         String alias = mEdtKeyAlias.getText().toString();
-        view.requestFocus();
         view.setEnabled(false);
 
         try {
@@ -163,13 +162,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void encryptString(String alias){
+        mEdtEncrypt.setText("");
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) mKeyStore.getEntry(alias, null);
             RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
             String initialText =  mEdtInitText.getText().toString();
             if(initialText.isEmpty()){
-                Toast.makeText(MainActivity.this, "Enter text into 'Initial Text' widget", Toast.LENGTH_LONG);
+                Toast.makeText(this, "Enter text into 'Initial Text' widget", Toast.LENGTH_LONG).show();
                 return;
             }
             Cipher input = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
@@ -206,12 +206,15 @@ public class MainActivity extends AppCompatActivity {
     public void decryptString(String alias){
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)mKeyStore.getEntry(alias, null);
-            RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
 
-            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
-            output.init(Cipher.DECRYPT_MODE, privateKey);
+            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
 
             String cipherText = mEdtEncrypt.getText().toString();
+            if(cipherText.isEmpty()){
+                Toast.makeText(MainActivity.this, "Must to encrypt data before decrypt data!", Toast.LENGTH_LONG).show();
+                return;
+            }
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new ByteArrayInputStream(Base64.decode(cipherText, Base64.DEFAULT)), output);
 
@@ -236,8 +239,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
             e.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
